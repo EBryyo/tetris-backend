@@ -1,8 +1,5 @@
 #pragma once
 
-/*
-  colors enum for the pieces.
- */
 typedef enum {
   EMPTY = 0,
   LIGHT_BLUE, // bar
@@ -12,4 +9,4 @@ typedef enum {
   PURPLE,     // T
   YELLOW,     // square
   GREEN       // S
-} colors;
+} color;

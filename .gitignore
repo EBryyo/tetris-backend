@@ -3,3 +3,5 @@ build
 
 **/Makefile
 **/Makefile.am
+.cache/
+tetris
