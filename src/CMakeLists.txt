@@ -1,5 +1,6 @@
 add_executable(tetris
   tetris.cc
+  game.cc
 )
 
 FetchContent_Declare(

@@ -17,17 +17,18 @@ typedef struct {
   color *board; // the board. to access [x,y] -> board[x + y * WIDTH];
   piece *queue; // queue of pieces.
 
-  uint8_t height;           // height of the board
-  uint8_t width;            // width of the board
-  piece store;              // contains the stored piece
+  int8_t height;    // height of the board
+  int8_t width;     // width of the board
+  int8_t can_store; // determines if the player can store a piece right now.
+  piece store;      // contains the stored piece
   ActivePiece active_piece; // the active piece. not included in the board;
   int score;                // player score
-} Game;
+} Tetris;
 
 /*
  * @brief initiates the game. returns a pointer to the game state.
  */
-Game *game_init();
+Tetris *game_init();
 
 /*
  * @uninitializes the game. frees all related resources.

@@ -1,5 +1,7 @@
 add_library(tetris-backend STATIC
   tetris.c
+  pieces.c 
+  activepiece.c
 )
 
 target_include_directories(tetris-backend PUBLIC

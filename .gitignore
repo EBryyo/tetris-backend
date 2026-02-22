@@ -5,3 +5,6 @@ build
 **/Makefile.am
 .cache/
 tetris
+demo.cast
+*.cast 
+vgcore*
