@@ -1,7 +1,7 @@
 #pragma once
 
-#include <directions.h>
-#include <pieces.h>
+#include "directions.h"
+#include "pieces.h"
 
 /*
  * a struct to depict a pair of relative coordinates.

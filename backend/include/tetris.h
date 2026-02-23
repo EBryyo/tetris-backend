@@ -5,8 +5,8 @@ extern "C" {
 #endif
 
 #include "activepiece.h"
-#include <colors.h>
-#include <pieces.h>
+#include "colors.h"
+#include "pieces.h"
 #include <stddef.h>
 #include <stdint.h>
 

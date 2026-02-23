@@ -6,8 +6,10 @@
 #include <tetris.h>
 #include <time.h>
 
-#define HEIGHT 20;
-#define WIDTH 10;
+#define HEIGHT 20
+#define WIDTH 10
+
+#define QUEUE_LENGTH 6
 
 Tetris *game_state = NULL;
 
@@ -19,6 +21,25 @@ color *board(int8_t x, int8_t y) {
   return (color *)game_state->board + x + game_state->width * y;
 }
 
+/*
+   @brief   pops a piece from the queue and generates a new tail.
+   @return  the popped piece
+*/
+piece pop_queue() {
+  piece *queue = game_state->queue;
+  piece popped = *queue;
+  for (size_t i = 1; i < QUEUE_LENGTH; i++) {
+    queue[i - 1] = queue[i];
+  }
+
+  queue[QUEUE_LENGTH - 1] = random_piece();
+
+  return popped;
+}
+
+/*
+   @brief   sets a new active piece to the game state.
+*/
 void get_new_piece() {
   if (game_state == NULL) {
     perror("tried to modify active piece before game state was initialized.");
@@ -26,8 +47,8 @@ void get_new_piece() {
 
   ActivePiece new_piece = {
       .direction = UP,
-      .type = random_piece(), // TODO: fetch piece type from queue instead.
-      .x = game_state->width / 2,
+      .type = pop_queue(),
+      .x = WIDTH / 2,
       .y = 0,
   };
   set_piece_blocks(&new_piece);
@@ -35,7 +56,29 @@ void get_new_piece() {
   game_state->active_piece = new_piece;
 }
 
-uint8_t validate_translation(int8_t x, int8_t y) { return 1; }
+/*
+    @brief        checks if translating the active piece by (x,y) is valid (no
+   collisions)
+    @param x_vec  the x coordinate of the translation vector.
+    @param y_vec  the y coordinate of the translation vector.
+    @return       1 if the translation can be made, 0 otherwise.
+*/
+uint8_t validate_translation(int8_t x_vec, int8_t y_vec) {
+  ActivePiece *active_piece = &game_state->active_piece;
+  const pair *blocks = active_piece->blocks;
+  for (size_t i = 0; i < 4; i++) {
+    const pair block = blocks[i];
+    int8_t x = block.x + active_piece->x + x_vec;
+    int8_t y = block.y + active_piece->y + y_vec;
+
+    if (x < 0 || x >= WIDTH ||
+        (y >= 0 && y < HEIGHT && *board(x, y) != EMPTY)) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
 
 Tetris *game_init() {
   srand(time(NULL));
@@ -52,14 +95,17 @@ Tetris *game_init() {
 
   game_state->width = WIDTH;
   game_state->height = HEIGHT;
-  game_state->board =
-      calloc(game_state->width * game_state->height, sizeof(color));
+  game_state->board = calloc(WIDTH * HEIGHT, sizeof(color));
   game_state->can_store = 1;
-  game_state->queue = NULL; // TODO: implement queue initialization
+  game_state->queue = calloc(QUEUE_LENGTH, sizeof(piece));
   game_state->store = NONE;
 
-  for (size_t i = 0; i < game_state->width * game_state->height; i++) {
+  for (size_t i = 0; i < WIDTH * HEIGHT; i++) {
     game_state->board[i] = EMPTY;
+  }
+
+  for (size_t i = 0; i < QUEUE_LENGTH; i++) {
+    game_state->queue[i] = random_piece();
   }
 
   get_new_piece();
@@ -115,7 +161,6 @@ void game_tick() {
   }
 
   // get new piece
-  // TODO: implement popping a piece off the queue
   get_new_piece();
 }
 
